@@ -1,0 +1,33 @@
+{
+  "name": "wr2net/igest-connect",
+  "description": "Biblioteca de integração com o Igest Software",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Wagner Rigoli da Rosa",
+      "email": "wagner@rigolisarosa.com"
+    }
+  ],
+  "require": {
+    "php": "^7.4"
+  },
+  "require-dev": {
+    "php": "^7.4",
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "IgestConnect\\": [
+        "src",
+        "tests"
+      ]
+    }
+  },
+  "scripts": {
+    "test": [
+      "phpunit --testdox tests/"
+    ]
+  },
+  "minimum-stability": "dev"
+}
