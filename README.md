@@ -1,1 +1,1 @@
-igest-connect
+integre-connect
