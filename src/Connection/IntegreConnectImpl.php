@@ -36,6 +36,11 @@ class IntegreConnectImpl implements IntegreConnect
     private $header;
 
     /**
+     * @var SendExec
+     */
+    private $send;
+
+    /**
      * IntegreConnectImpl constructor.
      * @param $endpoint
      * @param $key
@@ -45,6 +50,7 @@ class IntegreConnectImpl implements IntegreConnect
         $this->endpoint = $endpoint;
         $this->key = $key;
         $this->header = $header;
+        $this->send = new SendExec();
     }
 
     /**
@@ -54,7 +60,7 @@ class IntegreConnectImpl implements IntegreConnect
     public function sendContract($data)
     {
         $this->integreData = $this->dataCompose($data);
-        return $this->sendExec->sendExec($this->endpoint, $this->key, $this->header, $this->integreData);
+        return $this->send->sendExec($this->endpoint, $this->key, $this->header, $this->integreData);
     }
 
     /**
