@@ -1,10 +1,10 @@
 <?php
 
-namespace IgestConnect\Util;
+namespace IntegreConnect\Util;
 
 /**
  * Class SendExec
- * @package IgestConnect\Util
+ * @package IntegreConnect\Util
  */
 class SendExec
 {

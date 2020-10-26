@@ -1,5 +1,5 @@
 {
-  "name": "wr2net/igest-connect",
+  "name": "wr2net/integre-connect",
   "description": "Biblioteca de integração com o Igest Software",
   "type": "library",
   "license": "MIT",
@@ -18,7 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "IgestConnect\\": [
+      "IntegreConnect\\": [
         "src",
         "tests"
       ]

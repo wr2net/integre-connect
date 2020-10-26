@@ -3,7 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
-use IgestConnect\Util\SendExec;
+use IntegreConnect\Util\SendExec;
 
 class SendExecTest extends TestCase
 {
