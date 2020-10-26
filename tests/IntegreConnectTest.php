@@ -32,13 +32,22 @@ class IntegreConnectTest extends TestCase
     protected $key;
 
     /**
+     * @var string[]
+     */
+    protected $header;
+
+    /**
      * Initial setUp to tests
      */
     public function setUp(): void
     {
         $this->endpoint = "";
         $this->key = "";
-        $this->integre = new IntegreConnectImpl($this->endpoint, $this->key);
+        $this->header = [
+            "action" => "",
+            "host" => ""
+        ];
+        $this->integre = new IntegreConnectImpl($this->endpoint, $this->key, $this->header);
 
         $this->integreData = [
             'Nome' => '',
@@ -66,7 +75,7 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyContainsInstanceOf()
     {
-        $this->assertInstanceOf(IntegreConnectImpl::class, new IntegreConnectImpl($this->endpoint, $this->key));
+        $this->assertInstanceOf(IntegreConnectImpl::class, new IntegreConnectImpl($this->endpoint, $this->key, $this->header));
     }
 
     /**
@@ -74,7 +83,7 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyContaisInstanceOfDataCompose()
     {
-        $this->assertTrue( method_exists( new IntegreConnectImpl($this->endpoint, $this->key), 'dataCompose' ), 'Method not found: dataCompose()' );
+        $this->assertTrue( method_exists( new IntegreConnectImpl($this->endpoint, $this->key, $this->header), 'dataCompose' ), 'Method not found: dataCompose()' );
     }
 
     /**
