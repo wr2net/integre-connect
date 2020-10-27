@@ -2,8 +2,6 @@
 
 namespace IntegreConnect\Connection;
 
-use IntegreConnect\Util\SendExec;
-
 /**
  * Class IntegreConnectImpl
  * @package IntegreConnect\Connection
@@ -11,14 +9,9 @@ use IntegreConnect\Util\SendExec;
 class IntegreConnectImpl implements IntegreConnect
 {
     /**
-     * @var string[]
+     * @var string
      */
-    private $integreData;
-
-    /**
-     * @var SendExec
-     */
-    private $sendExec;
+    private $host;
 
     /**
      * @var string
@@ -31,64 +24,107 @@ class IntegreConnectImpl implements IntegreConnect
     private $key;
 
     /**
-     * @var string[]
+     * @var string
      */
-    private $header;
-
-    /**
-     * @var SendExec
-     */
-    private $send;
+    private $version = '1';
 
     /**
      * IntegreConnectImpl constructor.
-     * @param $endpoint
-     * @param $key
+     * @param  string  $host
+     * @param  string  $endpoint
+     * @param  string  $key
+     * @param  string|null  $version
      */
-    public function __construct($endpoint, $key, $header)
+    public function __construct(string $host, string $endpoint, string $key, string $version = null)
     {
+        $this->host = $host;
         $this->endpoint = $endpoint;
         $this->key = $key;
-        $this->header = $header;
-        $this->send = new SendExec();
+
+        if (!is_null($version)) {
+            $this->version = $version;
+        }
     }
 
     /**
      * @param $data
      * @return mixed
      */
-    public function sendContract($data)
+    public function send($data)
     {
-        $this->integreData = $this->dataCompose($data);
-        return $this->send->sendExec($this->endpoint, $this->key, $this->header, $this->integreData);
+        return $this->sendRequest($data['action'], $this->parseBody($data));
     }
 
     /**
-     * @param $data
-     * @return false|string
+     * @param  string  $action
+     * @param  array  $data
+     * @return bool|string
      */
-    public function dataCompose($data)
+    private function sendRequest(string $action, array $data)
     {
-        return json_encode(
-            [
-                'Nome' => $data['name'],
-                'Cpf' => $data['document'],
-                'DataNascimento' => $data['birth_date'],
-                'TelefoneFixo' => $data['telephone'],
-                'TelefoneMovel' => $data['cellphone'],
-                'Email' => $data['email'],
-                'NomeMae' => $data['mother_name'],
-                'EstadoCivil' => $data['marital_status'],
-                'EnderecoCep' => $data['zip_code'],
-                'EnderecoDescricao' => $data['public_place'],
-                'EnderecoNumero' => $data['number'],
-                'EnderecoComplemento' => $data['complement'],
-                'EnderecoBairro' => $data['neighborhood'],
-                'EnderecoCidadeNome' => $data['city'],
-                'EnderecoCidadeEstado' => $data['state'],
-                'Produto' => $data['product_reference'],
-                'Fid' => $data['fid']
-            ]
-        );
+        $header = [
+            'Content-Type: text/xml',
+            'SoapAction: '.$action,
+            'Host: '.$this->host,
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->host.$this->endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->envelopeBody($action, $data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return $response;
+    }
+
+    /**
+     * @param  string  $action
+     * @param  string  $data
+     * @return string
+     */
+    private function envelopeBody(string $action, string $data)
+    {
+        return '<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body>
+        <'.$action.' xmlns="http://tempuri.org/">
+        <chaveSeguranca>'.$this->key.'</chaveSeguranca>
+        <versaoIntegraco>'.$this->version.'</versaoIntegraco>
+        <jsonContrato><!CDATA['.$data.']</jsonContrato>
+        </'.$action.'></s:Body></s:Envelope>';
+    }
+
+    /**
+     * @param  array  $data
+     * @param  bool  $outputAsJson
+     * @return array|false|string
+     */
+    private function parseBody(array $data, bool $outputAsJson = true)
+    {
+        $body = [
+            'Nome' => $data['name'],
+            'Cpf' => $data['document'],
+            'DataNascimento' => $data['birth_date'],
+            'TelefoneFixo' => $data['telephone'],
+            'TelefoneMovel' => $data['cellphone'],
+            'Email' => $data['email'],
+            'NomeMae' => $data['mother_name'],
+            'EstadoCivil' => $data['marital_status'],
+            'EnderecoCep' => $data['zip_code'],
+            'EnderecoDescricao' => $data['public_place'],
+            'EnderecoNumero' => $data['number'],
+            'EnderecoComplemento' => $data['complement'],
+            'EnderecoBairro' => $data['neighborhood'],
+            'EnderecoCidadeNome' => $data['city'],
+            'EnderecoCidadeEstado' => $data['state'],
+            'Produto' => $data['product_reference'],
+            'Fid' => $data['fid'],
+        ];
+
+        if ($outputAsJson) {
+            return json_encode($body);
+        }
+
+        return $body;
     }
 }

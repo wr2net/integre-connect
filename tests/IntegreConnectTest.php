@@ -32,22 +32,20 @@ class IntegreConnectTest extends TestCase
     protected $key;
 
     /**
-     * @var string[]
+     * @var string
      */
-    protected $header;
+    private $host;
 
     /**
      * Initial setUp to tests
      */
     public function setUp(): void
     {
+        $this->host = "";
         $this->endpoint = "";
         $this->key = "";
-        $this->header = [
-            "action" => "",
-            "host" => ""
-        ];
-        $this->integre = new IntegreConnectImpl($this->endpoint, $this->key, $this->header);
+
+        $this->integre = new IntegreConnectImpl($this->host, $this->endpoint, $this->key);
 
         $this->integreData = [
             'Nome' => '',
@@ -75,30 +73,20 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyContainsInstanceOf()
     {
-        $this->assertInstanceOf(IntegreConnectImpl::class, new IntegreConnectImpl($this->endpoint, $this->key, $this->header));
+        $this->assertInstanceOf(IntegreConnectImpl::class, $this->integre);
     }
 
     /**
      * @test
      */
-    public function verifyContaisInstanceOfDataCompose()
+    public function verifyContainsInstanceOfParseBody()
     {
-        $this->assertTrue( method_exists( new IntegreConnectImpl($this->endpoint, $this->key, $this->header), 'dataCompose' ), 'Method not found: dataCompose()' );
+        $this->assertTrue( method_exists( $this->integre, 'parseBody' ), 'Method not found: parseBody()' );
     }
 
     /**
      * @test
      * @depends verifyContainsInstanceOf
-     */
-    public function verifyExistsAttributs()
-    {
-        $this->assertObjectHasAttribute('integreData', $this->integre);
-    }
-
-    /**
-     * @test
-     * @depends verifyContainsInstanceOf
-     * @depends verifyExistsAttributs
      */
     public function verifyQuantityKeys()
     {
@@ -108,7 +96,6 @@ class IntegreConnectTest extends TestCase
     /**
      * @test
      * @depends verifyContainsInstanceOf
-     * @depends verifyExistsAttributs
      */
     public function verifyHasKey()
     {
@@ -131,33 +118,102 @@ class IntegreConnectTest extends TestCase
         $this->assertArrayHasKey('Fid', $this->integreData);
     }
 
+//    /**
+//     * @test
+//     * @depends verifyContainsInstanceOf
+//     * @depends verifyContainsInstanceOfParseBody
+//     */
+//    public function verifyAsAJson()
+//    {
+//        $data = [
+//            'name' => null,
+//            'document' => null,
+//            'birth_date' => null,
+//            'telephone' => null,
+//            'cellphone' => null,
+//            'email' => null,
+//            'mother_name' => null,
+//            'marital_status' => null,
+//            'zip_code' => null,
+//            'public_place' => null,
+//            'number' => null,
+//            'complement' => null,
+//            'neighborhood' => null,
+//            'city' => null,
+//            'state' => null,
+//            'product_reference' => null,
+//            'fid' => null
+//        ];
+//
+//        $this->assertJson($this->integre->parseBody($data));
+//    }
+
+//    /**
+//     * @test
+//     * @depends verifyContainsInstanceOf
+//     * @depends verifyContainsInstanceOfParseBody
+//     */
+//    public function verifyAsAArray()
+//    {
+//        $data = [
+//            'name' => null,
+//            'document' => null,
+//            'birth_date' => null,
+//            'telephone' => null,
+//            'cellphone' => null,
+//            'email' => null,
+//            'mother_name' => null,
+//            'marital_status' => null,
+//            'zip_code' => null,
+//            'public_place' => null,
+//            'number' => null,
+//            'complement' => null,
+//            'neighborhood' => null,
+//            'city' => null,
+//            'state' => null,
+//            'product_reference' => null,
+//            'fid' => null
+//        ];
+//
+//        $this->assertIsArray($this->integre->parseBody($data, false));
+//    }
+
     /**
      * @test
-     * @depends verifyContainsInstanceOf
-     * @depends verifyContaisInstanceOfDataCompose
      */
-    public function verifyAsAJson()
+    public function verifyContainsInstanceOfSendRequest()
     {
-        $data = [
-            'name' => null,
-            'document' => null,
-            'birth_date' => null,
-            'telephone' => null,
-            'cellphone' => null,
-            'email' => null,
-            'mother_name' => null,
-            'marital_status' => null,
-            'zip_code' => null,
-            'public_place' => null,
-            'number' => null,
-            'complement' => null,
-            'neighborhood' => null,
-            'city' => null,
-            'state' => null,
-            'product_reference' => null,
-            'fid' => null
-        ];
-
-        $this->assertJson($this->integre->dataCompose($data));
+        $this->assertTrue( method_exists( $this->integre, 'sendRequest' ), 'Method not found: sendRequest()' );
     }
+
+//    /**
+//     * @test
+//     */
+//    public function verifyAsAXml()
+//    {
+//        $data = [
+//            'name' => null,
+//            'document' => null,
+//            'birth_date' => null,
+//            'telephone' => null,
+//            'cellphone' => null,
+//            'email' => null,
+//            'mother_name' => null,
+//            'marital_status' => null,
+//            'zip_code' => null,
+//            'public_place' => null,
+//            'number' => null,
+//            'complement' => null,
+//            'neighborhood' => null,
+//            'city' => null,
+//            'state' => null,
+//            'product_reference' => null,
+//            'fid' => null
+//        ];
+//
+//        $data = $this->integre->parseBody($data);
+//
+//        $this->assertNotFalse($this->integre->envelopeBody('test', $data));
+//        $this->assertIsString($this->integre->envelopeBody('test', $data));
+//    }
 }
