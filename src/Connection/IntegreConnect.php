@@ -12,5 +12,5 @@ interface IntegreConnect
      * @param $data
      * @return mixed
      */
-    public function sendContract($data);
+    public function send($data);
 }
