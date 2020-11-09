@@ -105,6 +105,7 @@ class IntegreConnectImpl implements IntegreConnect
             'Nome' => $data['name'],
             'Cpf' => $data['document'],
             'DataNascimento' => $data['birth_date'],
+            'EstadoCivil' => $data['civil_id'],
             'TelefoneFixo' => $data['telephone'],
             'TelefoneMovel' => $data['cellphone'],
             'Email' => $data['email'],
