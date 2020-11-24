@@ -3,7 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
-use IntegreConnect\Connection\IntegreConnectImpl;
+use IntegreConnect\Connection\IntegreConnect;
 
 /**
  * Class IntegreConnectTest
@@ -12,7 +12,7 @@ class IntegreConnectTest extends TestCase
 {
 
     /**
-     * @var IntegreConnectImpl
+     * @var IntegreConnect
      */
     protected $integre;
 
@@ -45,7 +45,7 @@ class IntegreConnectTest extends TestCase
         $this->endpoint = "";
         $this->key = "";
 
-        $this->integre = new IntegreConnectImpl($this->host, $this->endpoint, $this->key);
+        $this->integre = new IntegreConnect($this->host, $this->endpoint, $this->key);
 
         $this->integreData = [
             'Nome' => '',
@@ -73,7 +73,7 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyContainsInstanceOf()
     {
-        $this->assertInstanceOf(IntegreConnectImpl::class, $this->integre);
+        $this->assertInstanceOf(Integreconnect::class, $this->integre);
     }
 
     /**
