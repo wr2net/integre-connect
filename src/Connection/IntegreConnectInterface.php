@@ -2,6 +2,8 @@
 
 namespace IntegreConnect\Connection;
 
+use IntegreConnect\Actions\Action;
+
 /**
  * Interface IntegreConnect
  * @package IntegreConnect\Connection
@@ -9,9 +11,8 @@ namespace IntegreConnect\Connection;
 interface IntegreConnectInterface
 {
     /**
-     * @param $action
-     * @param $object
+     * @param  Action  $object
      * @return mixed
      */
-    public function send($action, $object);
+    public function send(Action $object);
 }
