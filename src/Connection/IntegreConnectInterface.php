@@ -9,8 +9,9 @@ namespace IntegreConnect\Connection;
 interface IntegreConnectInterface
 {
     /**
-     * @param $data
+     * @param $action
+     * @param $object
      * @return mixed
      */
-    public function send($data);
+    public function send($action, $object);
 }

@@ -47,20 +47,11 @@ class IntegreConnect implements IntegreConnectInterface
     }
 
     /**
-     * @param $data
-     * @return mixed
+     * @param $action
+     * @param $object
+     * @return bool|mixed|string
      */
-    public function send($data)
-    {
-        return $this->sendRequest($data['action'], $this->parseBody($data));
-    }
-
-    /**
-     * @param  string  $action
-     * @param  array  $data
-     * @return bool|string
-     */
-    private function sendRequest(string $action, array $data)
+    public function send($action, $object)
     {
         $header = [
             'Content-Type: text/xml',
@@ -69,62 +60,13 @@ class IntegreConnect implements IntegreConnectInterface
         ];
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->host.$this->endpoint);
+        curl_setopt($ch, CURLOPT_URL, $this->host . $this->endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->envelopeBody($action, $data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $object);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
         curl_close($ch);
         return $response;
-    }
-
-    /**
-     * @param  string  $action
-     * @param  string  $data
-     * @return string
-     */
-    private function envelopeBody(string $action, string $data)
-    {
-        return '<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body>
-        <' . $action . ' xmlns="http://tempuri.org/">
-        <chaveSeguranca>'.$this->key.'</chaveSeguranca>
-        <versaoIntegraco>'.$this->version.'</versaoIntegraco>
-        <jsonContrato><!CDATA['.$data.']</jsonContrato>
-        </' . $action . '></s:Body></s:Envelope>';
-    }
-
-    /**
-     * @param  array  $data
-     * @param  bool  $outputAsJson
-     * @return array|false|string
-     */
-    private function parseBody(array $data, bool $outputAsJson = true)
-    {
-        $body = [
-            'Nome' => $data['name'],
-            'Cpf' => $data['document'],
-            'DataNascimento' => $data['birth_date'],
-            'EstadoCivil' => $data['civil_state'],
-            'TelefoneFixo' => $data['telephone'],
-            'TelefoneMovel' => $data['cellphone'],
-            'Email' => $data['email'],
-            'NomeMae' => $data['mother_name'],
-            'EnderecoCep' => $data['zip_code'],
-            'EnderecoDescricao' => $data['public_place'],
-            'EnderecoNumero' => $data['number'],
-            'EnderecoComplemento' => $data['complement'],
-            'EnderecoBairro' => $data['neighborhood'],
-            'EnderecoCidadeNome' => $data['city'],
-            'EnderecoCidadeEstado' => $data['state'],
-            'Produto' => $data['product_reference'],
-            'Fid' => $data['fid'],
-        ];
-
-        if ($outputAsJson) {
-            return json_encode($body);
-        }
-
-        return $body;
     }
 }
