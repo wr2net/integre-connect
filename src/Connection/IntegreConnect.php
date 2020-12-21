@@ -2,6 +2,8 @@
 
 namespace IntegreConnect\Connection;
 
+use IntegreConnect\Actions\Action;
+
 /**
  * Class IntegreConnect
  * @package IntegreConnect\Connection
@@ -47,24 +49,14 @@ class IntegreConnect implements IntegreConnectInterface
     }
 
     /**
-     * @param $data
-     * @return mixed
+     * @param  Action  $action
+     * @return bool|mixed|string
      */
-    public function send($data)
-    {
-        return $this->sendRequest($data['action'], $this->parseBody($data));
-    }
-
-    /**
-     * @param  string  $action
-     * @param  array  $data
-     * @return bool|string
-     */
-    private function sendRequest(string $action, array $data)
+    public function send(Action $action)
     {
         $header = [
             'Content-Type: text/xml',
-            'SoapAction: '.$action,
+            'SoapAction: '.$action->name(),
             'Host: '.$this->host,
         ];
 
@@ -72,7 +64,7 @@ class IntegreConnect implements IntegreConnectInterface
         curl_setopt($ch, CURLOPT_URL, $this->host.$this->endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->envelopeBody($action, $data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->serialize($action));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
         curl_close($ch);
@@ -80,51 +72,45 @@ class IntegreConnect implements IntegreConnectInterface
     }
 
     /**
-     * @param  string  $action
-     * @param  string  $data
+     * @param  Action  $action
      * @return string
      */
-    private function envelopeBody(string $action, string $data)
+    private function serialize(Action $action): string
     {
-        return '<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body>
-        <' . $action . ' xmlns="http://tempuri.org/">
-        <chaveSeguranca>'.$this->key.'</chaveSeguranca>
-        <versaoIntegraco>'.$this->version.'</versaoIntegraco>
-        <jsonContrato><!CDATA['.$data.']</jsonContrato>
-        </' . $action . '></s:Body></s:Envelope>';
+        $actionName = $action->name();
+
+        $format = '%s%s%s';
+        return sprintf(
+            $format,
+            $this->envelopeBegin($actionName),
+            $action->body(),
+            $this->envelopeEnd($actionName)
+        );
     }
 
     /**
-     * @param  array  $data
-     * @param  bool  $outputAsJson
-     * @return array|false|string
+     * @param  string  $actionName
+     * @return string
      */
-    private function parseBody(array $data, bool $outputAsJson = true)
+    private function envelopeBegin(string $actionName): string
     {
-        $body = [
-            'Nome' => $data['name'],
-            'Cpf' => $data['document'],
-            'DataNascimento' => $data['birth_date'],
-            'EstadoCivil' => $data['civil_state'],
-            'TelefoneFixo' => $data['telephone'],
-            'TelefoneMovel' => $data['cellphone'],
-            'Email' => $data['email'],
-            'NomeMae' => $data['mother_name'],
-            'EnderecoCep' => $data['zip_code'],
-            'EnderecoDescricao' => $data['public_place'],
-            'EnderecoNumero' => $data['number'],
-            'EnderecoComplemento' => $data['complement'],
-            'EnderecoBairro' => $data['neighborhood'],
-            'EnderecoCidadeNome' => $data['city'],
-            'EnderecoCidadeEstado' => $data['state'],
-            'Produto' => $data['product_reference'],
-            'Fid' => $data['fid'],
-        ];
+        $format = '<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/">';
+        $format .= '<s:Body>';
+        $format .= '<%s xmlns="http://tempuri.org/">';
+        $format .= '<chaveSeguranca>%s</chaveSeguranca>';
+        $format .= '<versaoIntegraco>%s</versaoIntegraco>';
+        return sprintf($format, $actionName, $this->key, $this->version);
+    }
 
-        if ($outputAsJson) {
-            return json_encode($body);
-        }
-
-        return $body;
+    /**
+     * @param  string  $actionName
+     * @return string
+     */
+    private function envelopeEnd(string $actionName): string
+    {
+        $format = '</%s>';
+        $format .= '</s:Body>';
+        $format .= '</s:Envelope>';
+        return sprintf($format, $actionName);
     }
 }

@@ -1,0 +1,18 @@
+<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+    <IncludeHireCredCardAppJson xmlns="http://tempuri.org/">
+        <chaveSeguranca>chave</chaveSeguranca>
+        <versaoIntegraco>1</versaoIntegraco>
+        <jsonCliente>
+            <!CDATA[
+
+            ]
+        </jsonCliente>
+        <jsonCartao>
+            <!CDATA[
+
+            ]
+        </jsonCartao>
+    </IncludeHireCredCardAppJson>
+    </s:Body>
+</s:Envelope>

@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 use IntegreConnect\Connection\IntegreConnect;
+use IntegreConnect\Actions\Hire;
 
 /**
  * Class IntegreConnectTest
@@ -17,9 +18,14 @@ class IntegreConnectTest extends TestCase
     protected $integre;
 
     /**
-     * @var string[]
+     * @var array
      */
-    protected $integreData;
+    protected $clientData;
+
+    /**
+     * @var array
+     */
+    protected $billingData;
 
     /**
      * @var string
@@ -34,7 +40,27 @@ class IntegreConnectTest extends TestCase
     /**
      * @var string
      */
+    protected $action;
+
+    /**
+     * @var string
+     */
+    protected $version;
+
+    /**
+     * @var string
+     */
     private $host;
+
+    /**
+     * @var Hire
+     */
+    protected $hire;
+
+    /**
+     * @var array;
+     */
+    protected $allData;
 
     /**
      * Initial setUp to tests
@@ -44,28 +70,42 @@ class IntegreConnectTest extends TestCase
         $this->host = "";
         $this->endpoint = "";
         $this->key = "";
+        $this->action = "";
+        $this->version = "";
+
+        $this->clientData = [
+            'name' => '',
+            'document' => '',
+            'birth_date' => '',
+            'civil_state' => '',
+            'telephone' => '',
+            'cellphone' => '',
+            'email' => '',
+            'mother_name' => '',
+            'zip_code' => '',
+            'address' => '',
+            'number' => '',
+            'complement' => '',
+            'neighborhood' => '',
+            'city' => '',
+            'state' => '',
+            'product' => '',
+            'fid' => '',
+        ];
+
+        $this->billingData = [
+            'ds_cartao_token' => '',
+            'flag' => '',
+            'prefix' => '',
+            'sufix' => '',
+            'shelf_life' => '',
+            'client_name' => ''
+        ];
 
         $this->integre = new IntegreConnect($this->host, $this->endpoint, $this->key);
 
-        $this->integreData = [
-            'Nome' => '',
-            'Cpf' => '',
-            'DataNascimento' => '',
-            'TelefoneFixo' => '',
-            'TelefoneMovel' => '',
-            'Email' => '',
-            'NomeMae' => '',
-            'EstadoCivil' => '',
-            'EnderecoCep' => '',
-            'EnderecoDescricao' => '',
-            'EnderecoNumero' => '',
-            'EnderecoComplemento' => '',
-            'EnderecoBairro' => '',
-            'EnderecoCidadeNome' => '',
-            'EnderecoCidadeEstado' => '',
-            'Produto' => '',
-            'Fid' => ''
-        ];
+        $this->allData = $this->clientData . $this->billingData;
+        $this->hire = new Hire($this->allData);
     }
 
     /**
@@ -73,15 +113,23 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyContainsInstanceOf()
     {
-        $this->assertInstanceOf(Integreconnect::class, $this->integre);
+        $this->assertInstanceOf(IntegreConnect::class, $this->integre);
     }
 
     /**
      * @test
      */
-    public function verifyContainsInstanceOfParseBody()
+    public function verifyHired()
     {
-        $this->assertTrue( method_exists( $this->integre, 'parseBody' ), 'Method not found: parseBody()' );
+        $this->assertInstanceof(Hire::class, $this->hire);
+    }
+
+    /**
+     * @test
+     */
+    public function verifyContainsInstanceOfSend()
+    {
+        $this->assertTrue( method_exists( $this->integre, 'send' ), 'Method not found: send()' );
     }
 
     /**
@@ -90,7 +138,24 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyQuantityKeys()
     {
-        $this->assertCount(17, $this->integreData);
+        $this->assertCount(6, $this->billingData);
+        $this->assertCount(17, $this->clientData);
+    }
+
+    /**
+     * @test
+     */
+    public function verifyIsJsonParseBilling()
+    {
+        $this->assertJson(ParseBilling::parseTransaction($this->billingData));
+    }
+
+    /**
+     * @test
+     */
+    public function verifyIsJsonParseClient()
+    {
+        $this->assertJson(ParseClient::parseClient($this->clientData));
     }
 
     /**
@@ -99,121 +164,22 @@ class IntegreConnectTest extends TestCase
      */
     public function verifyHasKey()
     {
-        $this->assertArrayHasKey('Nome', $this->integreData);
-        $this->assertArrayHasKey('Cpf', $this->integreData);
-        $this->assertArrayHasKey('DataNascimento', $this->integreData);
-        $this->assertArrayHasKey('TelefoneFixo', $this->integreData);
-        $this->assertArrayHasKey('TelefoneMovel', $this->integreData);
-        $this->assertArrayHasKey('Email', $this->integreData);
-        $this->assertArrayHasKey('NomeMae', $this->integreData);
-        $this->assertArrayHasKey('EstadoCivil', $this->integreData);
-        $this->assertArrayHasKey('EnderecoCep', $this->integreData);
-        $this->assertArrayHasKey('EnderecoDescricao', $this->integreData);
-        $this->assertArrayHasKey('EnderecoNumero', $this->integreData);
-        $this->assertArrayHasKey('EnderecoComplemento', $this->integreData);
-        $this->assertArrayHasKey('EnderecoBairro', $this->integreData);
-        $this->assertArrayHasKey('EnderecoCidadeNome', $this->integreData);
-        $this->assertArrayHasKey('EnderecoCidadeEstado', $this->integreData);
-        $this->assertArrayHasKey('Produto', $this->integreData);
-        $this->assertArrayHasKey('Fid', $this->integreData);
+        $this->assertArrayHasKey('name', $this->clientData);
+        $this->assertArrayHasKey('document', $this->clientData);
+        $this->assertArrayHasKey('birth_date', $this->clientData);
+        $this->assertArrayHasKey('telephone', $this->clientData);
+        $this->assertArrayHasKey('cellphone', $this->clientData);
+        $this->assertArrayHasKey('email', $this->clientData);
+        $this->assertArrayHasKey('mother_name', $this->clientData);
+        $this->assertArrayHasKey('civil_state', $this->clientData);
+        $this->assertArrayHasKey('zip_code', $this->clientData);
+        $this->assertArrayHasKey('address', $this->clientData);
+        $this->assertArrayHasKey('number', $this->clientData);
+        $this->assertArrayHasKey('complement', $this->clientData);
+        $this->assertArrayHasKey('neighborhood', $this->clientData);
+        $this->assertArrayHasKey('city', $this->clientData);
+        $this->assertArrayHasKey('state', $this->clientData);
+        $this->assertArrayHasKey('product', $this->clientData);
+        $this->assertArrayHasKey('fid', $this->clientData);
     }
-
-//    /**
-//     * @test
-//     * @depends verifyContainsInstanceOf
-//     * @depends verifyContainsInstanceOfParseBody
-//     */
-//    public function verifyAsAJson()
-//    {
-//        $data = [
-//            'name' => null,
-//            'document' => null,
-//            'birth_date' => null,
-//            'telephone' => null,
-//            'cellphone' => null,
-//            'email' => null,
-//            'mother_name' => null,
-//            'marital_status' => null,
-//            'zip_code' => null,
-//            'public_place' => null,
-//            'number' => null,
-//            'complement' => null,
-//            'neighborhood' => null,
-//            'city' => null,
-//            'state' => null,
-//            'product_reference' => null,
-//            'fid' => null
-//        ];
-//
-//        $this->assertJson($this->integre->parseBody($data));
-//    }
-
-//    /**
-//     * @test
-//     * @depends verifyContainsInstanceOf
-//     * @depends verifyContainsInstanceOfParseBody
-//     */
-//    public function verifyAsAArray()
-//    {
-//        $data = [
-//            'name' => null,
-//            'document' => null,
-//            'birth_date' => null,
-//            'telephone' => null,
-//            'cellphone' => null,
-//            'email' => null,
-//            'mother_name' => null,
-//            'marital_status' => null,
-//            'zip_code' => null,
-//            'public_place' => null,
-//            'number' => null,
-//            'complement' => null,
-//            'neighborhood' => null,
-//            'city' => null,
-//            'state' => null,
-//            'product_reference' => null,
-//            'fid' => null
-//        ];
-//
-//        $this->assertIsArray($this->integre->parseBody($data, false));
-//    }
-
-    /**
-     * @test
-     */
-    public function verifyContainsInstanceOfSendRequest()
-    {
-        $this->assertTrue( method_exists( $this->integre, 'sendRequest' ), 'Method not found: sendRequest()' );
-    }
-
-//    /**
-//     * @test
-//     */
-//    public function verifyAsAXml()
-//    {
-//        $data = [
-//            'name' => null,
-//            'document' => null,
-//            'birth_date' => null,
-//            'telephone' => null,
-//            'cellphone' => null,
-//            'email' => null,
-//            'mother_name' => null,
-//            'marital_status' => null,
-//            'zip_code' => null,
-//            'public_place' => null,
-//            'number' => null,
-//            'complement' => null,
-//            'neighborhood' => null,
-//            'city' => null,
-//            'state' => null,
-//            'product_reference' => null,
-//            'fid' => null
-//        ];
-//
-//        $data = $this->integre->parseBody($data);
-//
-//        $this->assertNotFalse($this->integre->envelopeBody('test', $data));
-//        $this->assertIsString($this->integre->envelopeBody('test', $data));
-//    }
 }
