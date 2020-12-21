@@ -4,9 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 use IntegreConnect\Connection\IntegreConnect;
-use IntegreConnect\Connection\IncludeHires\ClientHired;
-use IntegreConnect\Connection\IncludeHires\ParseBilling;
-use IntegreConnect\Connection\IncludeHires\ParseClient;
+use IntegreConnect\Actions\Hire;
 
 /**
  * Class IntegreConnectTest
@@ -55,19 +53,14 @@ class IntegreConnectTest extends TestCase
     private $host;
 
     /**
-     * @var ClientHired
+     * @var Hire
      */
-    protected $client;
+    protected $hire;
 
     /**
-     * @var ParseBilling
+     * @var array;
      */
-    protected $parseBilling;
-
-    /**
-     * @var ParseClient
-     */
-    protected $parseClient;
+    protected $allData;
 
     /**
      * Initial setUp to tests
@@ -110,7 +103,9 @@ class IntegreConnectTest extends TestCase
         ];
 
         $this->integre = new IntegreConnect($this->host, $this->endpoint, $this->key);
-        $this->client = new ClientHired;
+
+        $this->allData = $this->clientData . $this->billingData;
+        $this->hire = new Hire($this->allData);
     }
 
     /**
@@ -124,9 +119,9 @@ class IntegreConnectTest extends TestCase
     /**
      * @test
      */
-    public function verifyClientHired()
+    public function verifyHired()
     {
-        $this->assertInstanceof(ClientHired::class, $this->client);
+        $this->assertInstanceof(Hire::class, $this->hire);
     }
 
     /**
