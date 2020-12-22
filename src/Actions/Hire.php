@@ -24,7 +24,7 @@ class Hire extends Action
      * Hire constructor.
      * @param  array  $data
      */
-    public function __construct(array $data)
+    public function __construct(object $data)
     {
         $this->data = $data;
     }
@@ -55,12 +55,12 @@ class Hire extends Action
     {
         $client = [
             'Nome' => $this->data->lead->name,
-            'Cpf' => Mask::maskDocumentCpf($this->data->lead->document),
+            'Cpf' => Mask::maskDocumentCpf($this->data->lead->doc),
             'DataNascimento' => Carbon::parse($this->data->lead->birth_date)->format('d/m/Y'),
-            'TelefoneFixo' => Mask::maskPhone($this->data->lead->telephone),
-            'TelefoneMovel' => Mask::maskPhone($this->data->lead->telephone),
+            'TelefoneFixo' => Mask::maskPhone($this->data->lead->phone),
+            'TelefoneMovel' => Mask::maskPhone($this->data->lead->phone),
             'Email' => $this->data->lead->email,
-            'NomeMae' => $this->data->lead->mother_name,
+            'NomeMae' => $this->data->lead->mothers_name,
             'EstadoCivil' => $this->data->lead->civil_state,
             'EnderecoCep' => Mask::maskCep($this->data->lead->zip_code),
             'EnderecoDescricao' => $this->data->lead->address,
@@ -69,8 +69,8 @@ class Hire extends Action
             'EnderecoBairro' => $this->data->lead->neighborhood,
             'EnderecoCidadeNome' => $this->data->lead->city,
             'EnderecoCidadeEstado' => $this->data->lead->state,
-            'Produto' => $this->data->lead->product,
-            'Fid' => $this->data->fid,
+            'Produto' => $this->data->tier->code,
+            'Fid' => $this->data->transaction->key,
         ];
 
         if ($outputAsJson) {
