@@ -55,7 +55,7 @@ class Hire extends Action
     {
         $client = [
             'Nome' => $this->data->lead->name,
-            'Cpf' => Mask::maskDocumentCpf($this->data->lead->document),
+            'Cpf' => Mask::maskDocumentCpf($this->data->lead->doc),
             'DataNascimento' => Carbon::parse($this->data->lead->birth_date)->format('d/m/Y'),
             'TelefoneFixo' => Mask::maskPhone($this->data->lead->telephone),
             'TelefoneMovel' => Mask::maskPhone($this->data->lead->telephone),
