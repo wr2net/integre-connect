@@ -54,23 +54,23 @@ class Hire extends Action
     private function parseClient(bool $outputAsJson = true)
     {
         $client = [
-            'Nome' => $this->data['name'],
-            'Cpf' => Mask::maskDocumentCpf($this->data['document']),
-            'DataNascimento' => Carbon::parse($this->data['birth_date'])->format('d/m/Y'),
-            'TelefoneFixo' => Mask::maskPhone($this->data['telephone']),
-            'TelefoneMovel' => Mask::maskPhone($this->data['telephone']),
-            'Email' => $this->data['email'],
-            'NomeMae' => $this->data['mother_name'],
-            'EstadoCivil' => $this->data['civil_state'],
-            'EnderecoCep' => Mask::maskCep($this->data['zip_code']),
-            'EnderecoDescricao' => $this->data['address'],
-            'EnderecoNumero' => $this->data['number'],
-            'EnderecoComplemento' => $this->data['complement'],
-            'EnderecoBairro' => $this->data['neighborhood'],
-            'EnderecoCidadeNome' => $this->data['city'],
-            'EnderecoCidadeEstado' => $this->data['state'],
-            'Produto' => $this->data['product'],
-            'Fid' => $this->data['fid'],
+            'Nome' => $this->data->lead->name,
+            'Cpf' => Mask::maskDocumentCpf($this->data->lead->document),
+            'DataNascimento' => Carbon::parse($this->data->lead->birth_date)->format('d/m/Y'),
+            'TelefoneFixo' => Mask::maskPhone($this->data->lead->telephone),
+            'TelefoneMovel' => Mask::maskPhone($this->data->lead->telephone),
+            'Email' => $this->data->lead->email,
+            'NomeMae' => $this->data->lead->mother_name,
+            'EstadoCivil' => $this->data->lead->civil_state,
+            'EnderecoCep' => Mask::maskCep($this->data->lead->zip_code),
+            'EnderecoDescricao' => $this->data->lead->address,
+            'EnderecoNumero' => $this->data->lead->number,
+            'EnderecoComplemento' => $this->data->lead->complement,
+            'EnderecoBairro' => $this->data->lead->neighborhood,
+            'EnderecoCidadeNome' => $this->data->lead->city,
+            'EnderecoCidadeEstado' => $this->data->lead->state,
+            'Produto' => $this->data->lead->product,
+            'Fid' => $this->data->fid,
         ];
 
         if ($outputAsJson) {
@@ -87,12 +87,12 @@ class Hire extends Action
     private function parseTransaction(bool $outputAsJson = true)
     {
         $transaction = [
-            'Token' => $this->data['ds_cartao_token'],
-            'Bandeira' => CardFlags::changeCardFlags(strtoupper($this->data['flag'])),
-            'NumeroPrefixo' => SliceCard::prefix($this->data['card_number']),
-            'NumeroSufixo' => SliceCard::sufix($this->data['card_number']),
-            'Validade' => ShelfLife::fourYear($this->data['shelf_life']),
-            'Nome' => $this->data['client_name']
+            'Token' => $this->data->card_token,
+            'Bandeira' => CardFlags::changeCardFlags(strtoupper($this->data->payment->flag)),
+            'NumeroPrefixo' => SliceCard::prefix($this->data->payment->card_number),
+            'NumeroSufixo' => SliceCard::sufix($this->data->payment->card_number),
+            'Validade' => ShelfLife::fourYear($this->data->payment->shelf_life),
+            'Nome' => $this->data->payment->client_name
         ];
 
         if ($outputAsJson) {

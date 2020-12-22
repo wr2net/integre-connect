@@ -65,6 +65,6 @@ class Mask
             return sprintf($format, $ddd, $prefix, $suffix);
         }
 
-        return phone;
+        return $phone;
     }
 }
