@@ -1,6 +1,11 @@
 <?php
 
 namespace IntegreConnect\Actions;
+use IntegreConnect\Helpers\ShelfLife;
+use IntegreConnect\Helpers\CardFlags;
+use IntegreConnect\Helpers\SliceCard;
+use IntegreConnect\Helpers\Mask;
+use Carbon\Carbon;
 
 /**
  * Class Hire
@@ -50,14 +55,14 @@ class Hire extends Action
     {
         $client = [
             'Nome' => $this->data['name'],
-            'Cpf' => $this->data['document'],
-            'DataNascimento' => $this->data['birth_date'],
-            'TelefoneFixo' => $this->data['telephone'],
-            'TelefoneMovel' => $this->data['cellphone'],
+            'Cpf' => Mask::maskDocumentCpf($this->data['document']),
+            'DataNascimento' => Carbon::parse($this->data['birth_date'])->format('d/m/Y'),
+            'TelefoneFixo' => Mask::maskPhone($this->data['telephone']),
+            'TelefoneMovel' => Mask::maskPhone($this->data['telephone']),
             'Email' => $this->data['email'],
             'NomeMae' => $this->data['mother_name'],
             'EstadoCivil' => $this->data['civil_state'],
-            'EnderecoCep' => $this->data['zip_code'],
+            'EnderecoCep' => Mask::maskCep($this->data['zip_code']),
             'EnderecoDescricao' => $this->data['address'],
             'EnderecoNumero' => $this->data['number'],
             'EnderecoComplemento' => $this->data['complement'],
@@ -83,11 +88,11 @@ class Hire extends Action
     {
         $transaction = [
             'Token' => $this->data['ds_cartao_token'],
-            'Bandeira' => $this->data['flag'],
-            'NumeroPrefixo' => $this->data['prefix'],
-            'NumeroSufixo' => $this->data['sufix'],
-            'Validade' => $this->data['shelf_life'],
-            'Nome' => $this->data['client_name'],
+            'Bandeira' => CardFlags::changeCardFlags(strtoupper($this->data['flag'])),
+            'NumeroPrefixo' => SliceCard::prefix($this->data['card_number']),
+            'NumeroSufixo' => SliceCard::sufix($this->data['card_number']),
+            'Validade' => ShelfLife::fourYear($this->data['shelf_life']),
+            'Nome' => $this->data['client_name']
         ];
 
         if ($outputAsJson) {
