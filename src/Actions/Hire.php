@@ -24,7 +24,7 @@ class Hire extends Action
      * Hire constructor.
      * @param  array  $data
      */
-    public function __construct(array $data)
+    public function __construct(object $data)
     {
         $this->data = $data;
     }
