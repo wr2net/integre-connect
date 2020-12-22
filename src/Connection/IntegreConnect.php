@@ -13,6 +13,11 @@ class IntegreConnect implements IntegreConnectInterface
     /**
      * @var string
      */
+    private $call;
+
+    /**
+     * @var string
+     */
     private $host;
 
     /**
@@ -32,16 +37,18 @@ class IntegreConnect implements IntegreConnectInterface
 
     /**
      * IntegreConnect constructor.
-     * @param  string  $host
-     * @param  string  $endpoint
-     * @param  string  $key
-     * @param  string|null  $version
+     * @param string $call
+     * @param string $host
+     * @param string $endpoint
+     * @param string $key
+     * @param string|null $version
      */
-    public function __construct(string $host, string $endpoint, string $key, string $version = null)
+    public function __construct(string $call, string $host, string $endpoint, string $key, string $version = null)
     {
         $this->host = $host;
         $this->endpoint = $endpoint;
         $this->key = $key;
+        $this->call = $call;
 
         if (!is_null($version)) {
             $this->version = $version;
