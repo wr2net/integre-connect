@@ -50,7 +50,7 @@ class Mask
      */
     public static function maskPhone($phone)
     {
-        $format = "(s%)s%-s%";
+        $format = "(%s)%s-%s";
         if (strlen($phone) === 10) {
             $ddd = substr($phone, 0, 2);
             $prefix = substr($phone, 2, 4);

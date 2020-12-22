@@ -56,14 +56,17 @@ class IntegreConnect implements IntegreConnectInterface
     {
         $header = [
             'Content-Type: text/xml',
-            'SoapAction: '.$action->name(),
+            'SoapAction: ' . $this->endpoint . $action->name(),
             'Host: '.$this->host,
         ];
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->host.$this->endpoint);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_URL, $this->call);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->serialize($action));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
