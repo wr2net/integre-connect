@@ -75,10 +75,10 @@ class IntegreConnect implements IntegreConnectInterface
         curl_close($ch);
 
         return json_encode([
-            "Status" => $code_response,
-            "Message" => CodeDefinitions::messageStatus($code_response),
-            "Action" => $action->name(),
-            "Response" => $response
+            "status" => $code_response,
+            "message" => CodeDefinitions::messageStatus($code_response),
+            "action" => $action->name(),
+            "response" => $response
         ]);
     }
 
