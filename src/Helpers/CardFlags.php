@@ -26,7 +26,7 @@ class CardFlags
 
     /**
      * @param $flag
-     * @return int|mixed
+     * @return int
      */
     public static function changeCardFlags($flag)
     {

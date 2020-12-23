@@ -21,7 +21,7 @@ class SliceCard
      * @param $number
      * @return string
      */
-    public static function sufix($number)
+    public static function suffix($number)
     {
         return substr($number, -4, 4);
     }

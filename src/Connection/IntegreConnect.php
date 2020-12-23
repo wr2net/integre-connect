@@ -3,6 +3,7 @@
 namespace IntegreConnect\Connection;
 
 use IntegreConnect\Actions\Action;
+use IntegreConnect\Helpers\CodeDefinitions;
 
 /**
  * Class IntegreConnect
@@ -10,11 +11,6 @@ use IntegreConnect\Actions\Action;
  */
 class IntegreConnect implements IntegreConnectInterface
 {
-    /**
-     * @var string
-     */
-    private $call;
-
     /**
      * @var string
      */
@@ -37,18 +33,16 @@ class IntegreConnect implements IntegreConnectInterface
 
     /**
      * IntegreConnect constructor.
-     * @param string $call
      * @param string $host
      * @param string $endpoint
      * @param string $key
      * @param string|null $version
      */
-    public function __construct(string $call, string $host, string $endpoint, string $key, string $version = null)
+    public function __construct(string $host, string $endpoint, string $key, string $version = null)
     {
         $this->host = $host;
         $this->endpoint = $endpoint;
         $this->key = $key;
-        $this->call = $call;
 
         if (!is_null($version)) {
             $this->version = $version;
@@ -69,7 +63,7 @@ class IntegreConnect implements IntegreConnectInterface
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-        curl_setopt($ch, CURLOPT_URL, $this->call);
+        curl_setopt($ch, CURLOPT_URL, $this->host);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
@@ -77,8 +71,14 @@ class IntegreConnect implements IntegreConnectInterface
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->serialize($action));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
+        $code_response = curl_getinfo($ch)['http_code'];
         curl_close($ch);
-        return $response;
+
+        return json_encode([
+            "Status" => $code_response,
+            "Message" => CodeDefinitions::messageStatus($code_response),
+            "Response" => $response
+        ]);
     }
 
     /**
@@ -106,10 +106,10 @@ class IntegreConnect implements IntegreConnectInterface
     {
         $format = '<s:Envelope xmlns.s="http://schemas.xmlsoap.org/soap/envelope/">';
         $format .= '<s:Body>';
-        $format .= '<%s xmlns="http://tempuri.org/">';
+        $format .= '<%s xmlns="%s">';
         $format .= '<chaveSeguranca>%s</chaveSeguranca>';
         $format .= '<versaoIntegraco>%s</versaoIntegraco>';
-        return sprintf($format, $actionName, $this->key, $this->version);
+        return sprintf($format, $actionName, $this->endpoint, $this->key, $this->version);
     }
 
     /**
