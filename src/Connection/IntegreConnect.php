@@ -77,6 +77,7 @@ class IntegreConnect implements IntegreConnectInterface
         return json_encode([
             "Status" => $code_response,
             "Message" => CodeDefinitions::messageStatus($code_response),
+            "Action" => $action->name(),
             "Response" => $response
         ]);
     }
