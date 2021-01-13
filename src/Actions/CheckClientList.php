@@ -4,10 +4,10 @@ namespace IntegreConnect\Actions;
 use IntegreConnect\Helpers\Mask;
 
 /**
- * Class CheckClients
+ * Class CheckClientList
  * @package IntegreConnect\Actions
  */
-class CheckClients extends Action
+class CheckClientList extends Action
 {
     const ACTION_NAME = 'NomeDaActionADefinir';
 
