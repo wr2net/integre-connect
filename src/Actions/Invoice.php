@@ -4,10 +4,10 @@ namespace IntegreConnect\Actions;
 use IntegreConnect\Helpers\Mask;
 
 /**
- * Class Discount
+ * Class Invoice
  * @package IntegreConnect\Actions
  */
-class Discount extends Action
+class Invoice extends Action
 {
     const ACTION_NAME = 'NomeDaActionADefinir2';
 
